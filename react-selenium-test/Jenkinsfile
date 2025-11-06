@@ -1,48 +1,48 @@
 pipeline {
     agent any
 
-    environment {
-        NODE_HOME = "C:\\Program Files\\nodejs"
-        PATH = "${NODE_HOME};${NODE_HOME}\\node_modules\\npm\\bin;${env.PATH}"
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                echo "Cloning repository..."
+                echo 'Checking out repository...'
                 checkout scm
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                echo "Installing project dependencies..."
-                bat 'npm install'
+                dir('react-selenium-test') {
+                    echo 'Installing npm dependencies...'
+                    bat 'npm install'
+                }
             }
         }
 
-        stage('Start React App') {
+        stage('Run React Build') {
             steps {
-                echo "Starting React app in background..."
-                bat 'start /B npm start'
-                sleep time: 10, unit: 'SECONDS' // Wait for server to start
+                dir('react-selenium-test') {
+                    echo 'Building React app...'
+                    bat 'npm run build'
+                }
             }
         }
 
         stage('Run Selenium Tests') {
             steps {
-                echo "Running Selenium UI tests..."
-                bat 'npm run test:ui || exit 0'
+                dir('react-selenium-test/tests') {
+                    echo 'Running Selenium UI tests...'
+                    bat 'npx mocha uiTest.js'
+                }
             }
         }
     }
 
     post {
         success {
-            echo "✅ All tests passed successfully!"
+            echo '✅ React + Selenium pipeline completed successfully!'
         }
         failure {
-            echo "❌ Tests failed. Check console logs for details."
+            echo '❌ Pipeline failed. Check logs for errors.'
         }
     }
 }
