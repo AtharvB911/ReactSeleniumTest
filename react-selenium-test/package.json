@@ -13,11 +13,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-  "start": "react-scripts start",
-  "build": "react-scripts build",
-  "test:ui": "mocha tests/*.js"
-}
-,
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test:ui": "mocha tests/*.js"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -35,5 +34,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "chai": "^6.2.0",
+    "mocha": "^11.7.5",
+    "selenium-webdriver": "^4.38.0"
   }
 }
